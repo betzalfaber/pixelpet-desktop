@@ -28,6 +28,14 @@ class PetState:
         if self.happiness < 30: return "Okay"
         return "Happy"
 
+    def tick(self):
+        """Simulates passive stat decay over time."""
+        self.hunger = clamp(self.hunger - 1)
+        self.energy = clamp(self.energy - 1)
+        # Happiness drops faster if pet is starving or exhausted
+        penalty = 2 if (self.hunger < 25 or self.energy < 25) else 1
+        self.happiness = clamp(self.happiness - penalty)
+
 def save_state(state, path=None):
     target = Path(path) if path is not None else STATE_FILE
     target.parent.mkdir(parents=True, exist_ok=True)
